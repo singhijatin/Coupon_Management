@@ -94,15 +94,15 @@ public class CouponService {
     private double calculateCartWiseDiscount(Coupon coupon, double totalPrice) {
         Map<String, Object> discountDetails = coupon.getDiscountDetails();
 
-        //double percentageDiscount = (double) discountDetails.get("discount");
+
         Object discountObj = discountDetails.get("discount");
 
         double percentageDiscount;
 
         if (discountObj instanceof Integer) {
-            percentageDiscount = ((Integer) discountObj).doubleValue(); // Convert Integer to double
+            percentageDiscount = ((Integer) discountObj).doubleValue();
         } else if (discountObj instanceof Double) {
-            percentageDiscount = (Double) discountObj; // It's already a double
+            percentageDiscount = (Double) discountObj;
         } else {
             throw new IllegalArgumentException("Invalid discount type");
         }
@@ -115,7 +115,7 @@ public class CouponService {
     private double calculateProductWiseDiscount(Coupon coupon, List<CartItemDTO> cartItems) {
         Map<String, Object> discountDetails = coupon.getDiscountDetails();
         Long productId = ((Number) discountDetails.get("productId")).longValue();
-        //double discountAmount = (double) discountDetails.get("discountAmount");
+
         Object discountObj = discountDetails.get("discount");
 
         double discountAmount = 0.0;
@@ -124,7 +124,7 @@ public class CouponService {
 
         for (CartItemDTO item : cartItems) {
             if (item.getProductId().equals(productId)) {
-                return discountAmount; // Apply discount on the specific product
+                return discountAmount;
             }
         }
         return 0;
@@ -133,10 +133,10 @@ public class CouponService {
     private double applyProductWiseCoupon(Coupon coupon, CartDTO cartDTO) {
         Map<String, Object> discountDetails = coupon.getDiscountDetails();
         Long productId = ((Number) discountDetails.get("productId")).longValue();
-        //double discountAmount = (double) discountDetails.get("discount");
+
         Object discountObj = discountDetails.get("discount");
 
-        double discountAmount = 0.0; // Default value, in case it's null
+        double discountAmount = 0.0;
 
         discountAmount = getDiscountAmount(discountObj, discountAmount);
 
@@ -152,9 +152,9 @@ public class CouponService {
     private double getDiscountAmount(Object discountObj, double discountAmount) {
         if (discountObj != null) {
             if (discountObj instanceof Integer) {
-                discountAmount = ((Integer) discountObj).doubleValue(); // Convert Integer to double
+                discountAmount = ((Integer) discountObj).doubleValue();
             } else if (discountObj instanceof Double) {
-                discountAmount = (Double) discountObj; // It's already a double
+                discountAmount = (Double) discountObj;
             } else {
                 throw new IllegalArgumentException("Invalid discountAmount type");
             }
@@ -207,7 +207,26 @@ public class CouponService {
     }
 
     private double applyBxGyCoupon(Coupon coupon, CartDTO cartDTO) {
+        double discount = calculateBxGyDiscount(coupon, cartDTO.getItems());
+        cartDTO.setTotalDiscount(cartDTO.getTotalDiscount() + discount);
 
-        return 0;
+        List<Map<String, Object>> getProducts = (List<Map<String, Object>>) coupon.getDiscountDetails().get("getProducts");
+        for (CartItemDTO cartItem : cartDTO.getItems()) {
+            for (Map<String, Object> getProduct : getProducts) {
+                if (cartItem.getProductId() == (int) getProduct.get("productId")) {
+
+                    int freeQuantity = (int) getProduct.get("quantity");
+                    cartItem.setQuantity(cartItem.getQuantity() + freeQuantity);
+                    cartItem.setTotalDiscount(cartItem.getTotalDiscount() + discount);
+                }
+            }
+        }
+
+        double totalPrice = cartDTO.getItems().stream()
+                .mapToDouble(item -> item.getQuantity() * item.getPrice() - item.getTotalDiscount())
+                .sum();
+        cartDTO.setTotalPrice(totalPrice);
+
+        return discount;
     }
 }
