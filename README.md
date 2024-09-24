@@ -12,6 +12,13 @@ This project aims to create a RESTful API to manage and apply different types of
   - **Product-wise Discounts**: Apply discounts to specific products.
   - **BxGy Deals**: Buy X items and get Y items free, with a repetition limit.
 
+## Dependencies Added
+
+- Spring Web
+- Spring Data JPA
+- MySQL Driver
+- Lombok
+
 ## Key Endpoints
 
 - `POST /coupons`: Create a new coupon.
