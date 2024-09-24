@@ -36,6 +36,11 @@ This project aims to create a RESTful API to manage and apply different types of
    - **Condition**: Product A must be in the cart.
    - **Discount**: 20% off Product A.
    - **Implementation**: Checks if the specific product is in the cart and applies the discount.
+3. **BxGy Coupons**:
+   - **Example**: Buy 2 products from the "buy" array (X, Y) and get 1 product from the "get" array (A, B) free.
+   - **Condition**: The cart must have sufficient products from the "buy" array.
+   - **Discount**: Y items from the "get" array are free.
+   - **Implementation**: Applies the discount with a repetition limit.
 
 ## Limitations
 
