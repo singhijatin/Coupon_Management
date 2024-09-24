@@ -166,8 +166,9 @@ public class CouponService {
 
 
     private double calculateBxGyDiscount(Coupon coupon, List<CartItemDTO> cartItems) {
-
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> buyProducts = (List<Map<String, Object>>) coupon.getDiscountDetails().get("buyProducts");
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> getProducts = (List<Map<String, Object>>) coupon.getDiscountDetails().get("getProducts");
         Integer repetitionLimitValue = (Integer) coupon.getDiscountDetails().get("repetitionLimit");
         int repetitionLimit = (repetitionLimitValue != null) ? repetitionLimitValue : 0;
@@ -210,6 +211,7 @@ public class CouponService {
         double discount = calculateBxGyDiscount(coupon, cartDTO.getItems());
         cartDTO.setTotalDiscount(cartDTO.getTotalDiscount() + discount);
 
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> getProducts = (List<Map<String, Object>>) coupon.getDiscountDetails().get("getProducts");
         for (CartItemDTO cartItem : cartDTO.getItems()) {
             for (Map<String, Object> getProduct : getProducts) {
