@@ -6,9 +6,7 @@ import com.example.CouponSystem.repo.CouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CouponService {
@@ -169,7 +167,43 @@ public class CouponService {
 
     private double calculateBxGyDiscount(Coupon coupon, List<CartItemDTO> cartItems) {
 
-        return 0;
+        List<Map<String, Object>> buyProducts = (List<Map<String, Object>>) coupon.getDiscountDetails().get("buyProducts");
+        List<Map<String, Object>> getProducts = (List<Map<String, Object>>) coupon.getDiscountDetails().get("getProducts");
+        Integer repetitionLimitValue = (Integer) coupon.getDiscountDetails().get("repetitionLimit");
+        int repetitionLimit = (repetitionLimitValue != null) ? repetitionLimitValue : 0;
+
+        int totalBuyItems = 0;
+        int totalFreeItems = 0;
+        double totalDiscount = 0;
+
+        List<Map<String, Object>> safeBuyProducts = Optional.ofNullable(buyProducts).orElse(Collections.emptyList());
+
+        for (CartItemDTO cartItem : cartItems) {
+            for (Map<String, Object> buyProduct : safeBuyProducts) {
+                if (cartItem.getProductId() == (int) buyProduct.get("productId")) {
+                    int requiredQuantity = (int) buyProduct.get("quantity");
+
+                    totalBuyItems += cartItem.getQuantity() / requiredQuantity;
+                }
+            }
+        }
+
+        totalBuyItems = Math.min(totalBuyItems, repetitionLimit);
+
+        List<Map<String, Object>> safeGetProducts = Optional.ofNullable(getProducts).orElse(Collections.emptyList());
+
+        for (CartItemDTO cartItem : cartItems) {
+            for (Map<String, Object> getProduct : safeGetProducts) {
+                if (cartItem.getProductId() == (int) getProduct.get("productId")) {
+                    int freeQuantity = (int) getProduct.get("quantity");
+                    totalFreeItems += Math.min(cartItem.getQuantity(), totalBuyItems * freeQuantity);
+
+                    totalDiscount += totalFreeItems * cartItem.getPrice();
+                }
+            }
+        }
+
+        return totalDiscount;
     }
 
     private double applyBxGyCoupon(Coupon coupon, CartDTO cartDTO) {
