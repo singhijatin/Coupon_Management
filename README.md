@@ -29,6 +29,17 @@ This project aims to create a RESTful API to manage and apply different types of
 - `POST /applicable-coupons`: Fetch applicable coupons for a cart and calculate the total discount.
 - `POST /apply-coupon/{id}`: Apply a specific coupon to a cart.
 
+## Payload for cart-wise -
+{
+    "type": "cart_wise",
+    "discountDetails": {
+        "threshold": 100,
+        "discount": 10
+    },
+    "expiryDate": "2024-10-31",
+    "isActive": true
+}
+
 ## Implemented Cases
 
 1. **Cart-wise Coupons**:
