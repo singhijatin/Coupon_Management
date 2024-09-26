@@ -40,6 +40,43 @@ This project aims to create a RESTful API to manage and apply different types of
     "isActive": true
 }
 
+## Payload for product-wise -
+{
+    "type": "product_wise",
+    "discountDetails": {
+        "productId": 1,
+        "discount": 20
+    },
+    "expiryDate": "2025-09-30",
+    "isActive": true
+}
+
+## Payload for BxGy -
+{
+    "type": "bxgy",
+    "discountDetails": {
+        "buyProducts": [
+            {
+                "productId": 1,
+                "quantity": 3
+            },
+            {
+                "productId": 2,
+                "quantity": 3
+            }
+        ],
+        "getProducts": [
+            {
+                "productId": 3,
+                "quantity": 1
+            }
+        ],
+        "repetitionLimit": 2
+    },
+    "expiryDate": "2024-11-30",
+    "isActive": true
+}
+
 ## Implemented Cases
 
 1. **Cart-wise Coupons**:
